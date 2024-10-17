@@ -1,7 +1,7 @@
 variable "bucket_name" {
   description = "The name of the S3 bucket"
   type        = string
-  default     = "my-personal-website-bucket"
+  default     = "epam-final-aws"
 }
 
 variable "region" {
