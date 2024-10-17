@@ -4,13 +4,34 @@ provider "aws" {
 
 resource "aws_s3_bucket" "website_bucket" {
   bucket = var.bucket_name
+  force_destroy = true 
+}
 
-  website {
-    index_document = "index.html"
-    error_document = "404.html"
+resource "aws_s3_bucket_website_configuration" "website_config" {
+  bucket = aws_s3_bucket.website_bucket.id
+
+  index_document {
+    suffix = "index.html"
   }
 
-  force_destroy = true 
+  error_document {
+    key = "404.html"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "public_access_block" {
+  bucket = aws_s3_bucket.website_bucket.id
+
+  block_public_acls   = false
+  block_public_policy = false
+}
+
+resource "aws_s3_bucket_ownership_controls" "ownership" {
+  bucket = aws_s3_bucket.website_bucket.id
+
+  rule {
+    object_ownership = "ObjectWriter"
+  }
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" {
@@ -27,13 +48,15 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   })
 }
 
-resource "aws_s3_object" "index_html" { 
-  bucket = aws_s3_bucket.website_bucket.bucket
-  key    = "index.html" 
-  source = "index.html" 
-  acl    = "public-read"
+
+resource "aws_s3_object" "index_html" {
+  bucket       = aws_s3_bucket.website_bucket.id
+  key          = "index.html"
+  source       = "index.html"
+  content_type = "text/html"  
 }
 
+
 output "website_url" {
-  value = aws_s3_bucket.website_bucket.website_endpoint
+  value = aws_s3_bucket.website_bucket.website_domain
 }
