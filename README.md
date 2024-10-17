@@ -1,6 +1,7 @@
 Infrastructure Setup
  
-The diagram illustrates the infrastructure for a static website deployment using AWS services and GitHub Actions,First I created as it was on the task photo but then I decided to modify it and This is how I modified the initial task infra:
+The diagram illustrates the infrastructure for a static website deployment using AWS services and GitHub Actions,First I created as it was on the task photo but then I decided to modify it and This is how I modified the initial task infra:![epam](https://github.com/user-attachments/assets/57782493-f503-4593-a7b1-dd53e57dcdfb)
+
 1.	GitHub Repository: Code for the static website resides in a GitHub repository.
 2.	GitHub Actions: On every push to the repository, a CI/CD pipeline triggers. GitHub Actions automatically deploys the website by uploading updated content to the Amazon S3 bucket.
 3.	Amazon S3: The S3 bucket stores the static website files. It is configured for Origin Access Control, which ensures only CloudFront can fetch content from S3, enhancing security.
