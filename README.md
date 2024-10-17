@@ -21,7 +21,8 @@ To enhance the website's performance, security, and global availability, I added
 •	HTTPS: Provides secure communication with SSL/TLS encryption.
 •	URL Redirection: Helps redirect traffic to the correct URL format (www vs non-www).
 Terraform Setup
- 
+ ![image](https://github.com/user-attachments/assets/e8c90bca-80b5-40e1-ae7f-007cafeb94c0)
+
 1.	Clone the repository
 I made public repository with Terraform code
 git clone https://github.com/Annatar3/static-s3-terraform
@@ -33,7 +34,8 @@ terraform init
 Once everything is set, apply the changes to create the infrastructure:
 terraform apply
 Confirm the changes, and Terraform will provision your S3 bucket and CloudFront distribution. After all this test page will be hosted,because in repository we had sample index.html.In future we can add Iac Pipeline as well.
- 
+ ![image](https://github.com/user-attachments/assets/75c5085b-2ad5-47cf-b4cd-230a065daf9a)
+
 
 CI/CD with GitHub Actions
 Now that the infrastructure is provisioned, we need to set up a GitHub Actions pipeline for continuous deployment. When a new commit is pushed to the repository, the updated files will be automatically uploaded to S3.
@@ -42,62 +44,11 @@ Create a new private repository on GitHub and push your project files. Make sure
 2.	GitHub Actions Workflow
 Create a .github/workflows/deploy.yml file in your repository to define the CI/CD pipeline.
 3.	All the secrets are stored in Github Repository Secrets and we retrieve them from there
-Not sure who is mentor because I don’t know anyone so I can not provide the private repo access to them so take a look at .YML here.
-
-
-name: Deploy to S3
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: Install AWS CLI
-      run: sudo apt-get install awscli -y
-
-    - name: Configure AWS Region
-      run: aws configure set region us-east-1
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-    - name: Check if index.html exists
-      run: ls -l index.html
-
-    - name: List S3 Buckets
-      run: aws s3 ls
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-    - name: Sync files to S3 (remove old and upload new index.html)
-      run: |
-        aws s3 rm s3://${{ secrets.S3_BUCKET_NAME }}/index.html --debug
-        
-        aws s3 cp index.html s3://${{ secrets.S3_BUCKET_NAME }}/index.html --debug
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-    - name: Invalidate CloudFront Cache
-      run: |
-        aws cloudfront create-invalidation \
-          --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
-          --paths "/index.html"
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+See the deploy.yml in .github/wokflows/ dir.
  
 New website after CI/CD
- 
+ ![image](https://github.com/user-attachments/assets/64b43b8c-1c8d-440c-ae16-cb80e20e8489)
+
 Advantages of CloudFront
 By placing CloudFront in front of the S3 bucket, we gain several advantages:
 •	Global Content Delivery: CloudFront distributes the content across its global edge locations, making the website load faster for users around the world.
@@ -109,6 +60,6 @@ By placing CloudFront in front of the S3 bucket, we gain several advantages:
 Accessing the Website
 You can access the website via two URLs:
 1.	CloudFront URL: Your CloudFront distribution will have its own URL (e.g., https://d3rpmvqtiokd83.cloudfront.net/)
-2.	Custom Domain: If you've configured a custom domain and set up URL redirection, the website will be accessible via your domain (e.g., https://toxicniko.me).
+2.	Custom Domain: If you've configured a custom domain and set up URL redirection, the website will be accessible via your domain (e.g., http://toxicniko.me).
 
 
